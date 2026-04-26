@@ -1,0 +1,41 @@
+{
+  "name": "oh-my-codex-workflows",
+  "version": "0.4.0",
+  "description": "Codex-native workflow skills inspired by oh-my-claudecode.",
+  "author": {
+    "name": "Local Codex plugin",
+    "url": "https://github.com/Yeachan-Heo/oh-my-claudecode"
+  },
+  "homepage": "https://github.com/Yeachan-Heo/oh-my-claudecode",
+  "repository": "https://github.com/Yeachan-Heo/oh-my-claudecode",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "workflow",
+    "multi-agent",
+    "agent-roles",
+    "orchestration",
+    "verification"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Oh My Codex Workflows",
+    "shortDescription": "OMC-style workflow, planning, QA, review, and benchmark skills for Codex.",
+    "longDescription": "A Codex-native workflow pack inspired by oh-my-claudecode. It ports the durable orchestration ideas into installable Codex skills, adds Codex-safe setup and ops workflows, and includes a deterministic benchmark for local effectiveness checks while intentionally omitting Claude-specific hook and slash-command runtimes.",
+    "developerName": "Local Codex plugin",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write",
+      "Review",
+      "Agent Roles"
+    ],
+    "websiteURL": "https://github.com/Yeachan-Heo/oh-my-claudecode",
+    "defaultPrompt": [
+      "Use omc-autopilot to build this feature end to end.",
+      "autopilot build this feature end to end.",
+      "Run the OMC benchmark to evaluate this workflow pack."
+    ],
+    "brandColor": "#2563EB"
+  }
+}
