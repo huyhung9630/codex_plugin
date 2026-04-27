@@ -26,7 +26,9 @@ Each role declares a Codex native type, mission, use cases, and prompt addendum.
 
 ### Skills
 
-The plugin now includes 38 Codex-native skills:
+The plugin now includes 41 Codex-native skills. This covers the upstream source
+skill set, with `setup` folded into `omc-setup`, plus Codex-only support skills
+for routing and review:
 
 - Core delivery: `omc-autopilot`, `omc-ralph`, `omc-ultrawork`, `omc-team`,
   `omc-plan`, `omc-ralplan`, `omc-ultraqa`, `omc-cancel`.
@@ -35,12 +37,13 @@ The plugin now includes 38 Codex-native skills:
   `omc-ai-slop-cleaner`, `omc-visual-verdict`.
 - Agent and routing layer: `omc-agents`, `omc-keywords`, `omc-reference`,
   `omc-ask`, `omc-ccg`, `omc-sciomc`, `omc-external-context`,
-  `omc-autoresearch`.
+  `omc-autoresearch`, `omc-runtime-policy`.
 - Knowledge and project workflows: `omc-remember`, `omc-wiki`,
-  `omc-deepinit`, `omc-skill`, `omc-skillify`, `omc-learner`.
+  `omc-writer-memory`, `omc-deepinit`, `omc-skill`, `omc-skillify`,
+  `omc-learner`.
 - Setup and operations: `omc-setup`, `omc-doctor`, `omc-mcp-setup`,
   `omc-project-session-manager`, `omc-configure-notifications`,
-  `omc-teams`, `omc-hud`, `omc-release`.
+  `omc-teams`, `omc-hud`, `omc-release`, `omc-self-improve`.
 
 All skills are Codex-native Markdown skill definitions. Claude-specific runtime
 features are adapted as workflows, not copied as unavailable runtime code.
@@ -61,6 +64,23 @@ features are adapted as workflows, not copied as unavailable runtime code.
   `.omc/config.jsonc`;
 - safe cleanup rules that preserve user-authored artifacts.
 
+## Runtime Policy
+
+Added `omc-runtime-policy` and wired it into `omc-keywords`, `omc-reference`,
+`omc-agents`, `omc-team`, `omc-ultrawork`, and `omc-autopilot`.
+
+The policy requires:
+
+- normal Codex by default when OMC does not materially help;
+- OMC only for explicit modes/keywords or tasks that benefit from planning,
+  QA loops, tracing, persistence, review, or parallel workers;
+- isolated minimal sub-agent context by default;
+- worker artifacts under `.codex/omc/runs/<run-id>/agents/`;
+- lead synthesis from artifact files instead of long worker output;
+- `PROJECT_CONTEXT.md` update at OMC closeout;
+- quality report with activation decision, latency if measured, worker count,
+  context mode, token usage if available, artifacts, and verification.
+
 ## Benchmark
 
 Added:
@@ -70,7 +90,7 @@ Added:
 
 The benchmark uses Node built-ins only and requires no API keys. It measures:
 
-- skill coverage vs upstream core workflow surface;
+- skill coverage vs upstream source skill surface;
 - skill frontmatter validity;
 - Codex compatibility scan for Claude-only patterns;
 - role coverage;

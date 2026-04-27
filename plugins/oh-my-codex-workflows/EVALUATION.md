@@ -20,6 +20,8 @@ Codex plugin ports the practical workflow layer into Codex-native skills:
   workflows adapted to Codex-safe boundaries;
 - 19 OMC-style agent role contracts mapped to Codex native sub-agent types;
 - Codex-native sub-agent rules for explicit parallel/team requests.
+- activation, context isolation, artifact handoff, project-memory closeout, and
+  quality-report policy for OMC runs.
 - a deterministic benchmark harness for local effectiveness checks.
 
 It intentionally does not port Claude-specific hook scripts, slash-command
@@ -36,7 +38,7 @@ Result after the OMC-like global install update:
 
 ```text
 Plugin validation passed.
-Validated oh-my-codex-workflows 0.4.0
+Validated oh-my-codex-workflows 0.4.1
 ```
 
 The validator now also checks the `agents/` catalog, all 19 role files, native
@@ -102,6 +104,9 @@ Result after the benchmark integration:
 Benchmark: oh-my-codex-workflows-content-quality
 Status: pass
 Score: 100/100 (threshold 90)
+- skill coverage vs source: 100/100 (38/38)
+- frontmatter validity: 100/100 (41/41)
+- runtime context policy: 100/100
 
 Benchmark: oh-my-codex-workflows-content-quality
 Status: pass
@@ -109,9 +114,9 @@ Score: 100/100 (threshold 95)
 ```
 
 The benchmark is deterministic and requires no API keys or package installs. It
-measures skill coverage vs the upstream core workflow surface, skill
+measures skill coverage vs the upstream source skill surface, skill
 frontmatter validity, Codex compatibility, role coverage, workflow integration
-references, and ASCII content.
+references, runtime context policy coverage, and ASCII content.
 
 ## Residual Risk
 

@@ -18,6 +18,9 @@ has separately installed and configured those systems.
 
 ## Mode Selection
 
+- Before choosing an OMC mode, apply `omc-runtime-policy`; the normal Codex
+  path is the default for direct questions, small edits, and simple one-path
+  tasks.
 - `omc-autopilot`: use for end-to-end feature delivery where the user wants the
   agent to handle discovery, planning, implementation, QA, and validation.
 - `omc-team`: use when the user explicitly asks for team, agents, delegation, or
@@ -49,6 +52,11 @@ Only use sub-agents when the current user request explicitly asks for agents,
 delegation, team mode, parallel work, `omc-team`, or `omc-ultrawork`. Otherwise,
 run the workflow locally.
 
+When sub-agents are used, give them isolated context by default. Have each
+worker write `.codex/omc/runs/<run-id>/agents/<lane-id>.md`, then read those
+artifact files for synthesis. Avoid full-context forks unless necessary and
+record the reason.
+
 ## Shared Discipline
 
 - Read the codebase before deciding.
@@ -57,3 +65,7 @@ run the workflow locally.
 - Use `update_plan` for multi-step work.
 - Verify with fresh commands and report failures honestly.
 - Never mark a task complete because it "should" work; show evidence.
+- At OMC closeout, update `PROJECT_CONTEXT.md` with durable project state.
+- Include a quality report: OMC used or skipped, latency if measured,
+  sub-agent count, context mode, token usage if available, artifacts, and
+  verification results.

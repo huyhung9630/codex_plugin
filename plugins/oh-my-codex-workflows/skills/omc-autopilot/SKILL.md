@@ -9,7 +9,9 @@ level: 4
 
 Use this skill when the user asks for `omc-autopilot`, "autopilot", "build it
 end to end", "handle everything", "make this for me", or otherwise wants a
-complete implementation without managing every phase.
+complete implementation without managing every phase. Apply
+`omc-runtime-policy`: if the task is small enough for normal Codex, do not use
+autopilot.
 
 ## Goal
 
@@ -64,6 +66,11 @@ proposal unless the user explicitly asks for planning only.
   delegation, or another OMC mode that implies it.
 - When sub-agents are used, select roles from `../../agents/` through the
   `omc-agents` routing table and include each role's prompt addendum.
+- When sub-agents are used, give them isolated minimal context by default and
+  require a worker artifact under `.codex/omc/runs/<run-id>/agents/`.
+- Create `.codex/omc/runs/<run-id>/manifest.json` for multi-agent or
+  multi-phase runs. Record mode, activation reason, start/end time, context
+  policy, artifact paths, and verification commands.
 - Keep state in the workspace only when it materially helps. Prefer
   `.codex/omc/autopilot-state.json`, `.codex/omc/specs/`, and
   `.codex/omc/plans/`. Avoid state files for small tasks.
@@ -76,6 +83,8 @@ proposal unless the user explicitly asks for planning only.
 - On success, remove only workflow-owned transient state files. Preserve specs,
   plans, benchmark results, user-authored notes, and any file whose ownership is
   unclear.
+- Before final response, update repository-root `PROJECT_CONTEXT.md` with
+  durable project facts, current state, known issues, and next steps.
 
 ## Stop Conditions
 
@@ -85,8 +94,10 @@ proposal unless the user explicitly asks for planning only.
 - Cancelled: the user says `stopomc`, `cancelomc`, `cancel`, or `abort`; switch
   to `omc-cancel` behavior and do not start new implementation work.
 
-The final answer must say what changed, what verification ran, and any residual
-risk or skipped check.
+The final answer must say what changed, what verification ran, any residual
+risk or skipped check, and a quality report with OMC mode, activation reason,
+latency if measured, worker count, context mode per worker, token usage if
+available, and artifact paths.
 
 ## Configuration
 

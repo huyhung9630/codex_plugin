@@ -7,7 +7,20 @@ argument-hint: "<magic keyword prompt>"
 # OMC Magic Keywords
 
 Use this skill when the user prompt contains an OMC-style magic keyword or asks
-for behavior like upstream OMC.
+for behavior like upstream OMC. First apply `omc-runtime-policy`: route to an
+OMC skill only when the mode materially helps. If no route is justified, handle
+the task with normal Codex behavior.
+
+## Activation Gate
+
+- Explicit OMC keyword or mode request: route to the matching OMC skill.
+- Clear need for multi-phase delivery, QA cycling, consensus planning, tracing,
+  persistent fix/verify loops, or parallel agents: route to OMC.
+- Direct question, small local edit, single-command check, or simple
+  explanation: do not use OMC ceremony; continue normally.
+- If sub-agents are used, they must follow `omc-runtime-policy`: isolated
+  context by default, artifact handoff, `PROJECT_CONTEXT.md` closeout, and
+  quality reporting.
 
 ## Routing
 
@@ -55,6 +68,10 @@ for behavior like upstream OMC.
   use `omc-remember`.
 - `wiki`, `project wiki`, `knowledge base`:
   use `omc-wiki`.
+- `self improve`, `self-improve`, `benchmark-driven improvement`:
+  use `omc-self-improve`.
+- `writer memory`, `character memory`, `scene memory`:
+  use `omc-writer-memory`.
 - `ai slop`, `clean slop`, `simplify this`:
   use `omc-ai-slop-cleaner`.
 - `deepinit`, `initialize agents`, `create AGENTS.md`:

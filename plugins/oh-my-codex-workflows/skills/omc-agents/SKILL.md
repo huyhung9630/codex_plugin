@@ -7,7 +7,8 @@ argument-hint: "[list|route|prompt] <task>"
 # OMC Agents
 
 Use this skill when the user mentions OMC agents, role routing, specialist
-agents, or asks for work to be split by role.
+agents, or asks for work to be split by role. Apply `omc-runtime-policy` before
+spawning any sub-agent.
 
 ## Important Codex Boundary
 
@@ -19,7 +20,18 @@ Claude Code OMC registers agents such as `architect`, `executor`, or
 2. choose the nearest Codex native sub-agent type: `worker`, `explorer`, or
    `default`;
 3. include the role's "Prompt Addendum" in the spawned agent prompt;
-4. assign explicit ownership and verification requirements.
+4. assign explicit ownership, verification requirements, and an artifact path.
+
+## Context And Artifact Policy
+
+- Spawn sub-agents with their own minimal context by default.
+- Do not fork the full conversation unless the worker truly needs prior
+  conversation context; record that exception as `agent-forked`.
+- Create a run directory such as `.codex/omc/runs/<run-id>/`.
+- Assign every worker an artifact path under
+  `.codex/omc/runs/<run-id>/agents/<lane-id>.md`.
+- The lead reads worker artifact files and decides next steps from those files.
+- Worker final responses should stay short and point to the artifact.
 
 ## Available Roles
 
@@ -85,8 +97,14 @@ your implementation to accommodate concurrent changes.
 Verification:
 <commands or checks>
 
+Artifact:
+Write the result to .codex/omc/runs/<run-id>/agents/<lane-id>.md using the
+OMC worker artifact schema. Include context mode, files read, files changed,
+verification, blockers, latency if available, and token usage if available.
+
 Final response:
-List changed paths if you edited files, verification performed, and blockers.
+List changed paths if you edited files, verification performed, blockers, and
+the artifact path. Do not paste the full artifact.
 ```
 
 To inspect a role from the workspace, use:

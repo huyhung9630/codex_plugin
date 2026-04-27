@@ -13,6 +13,12 @@ Validate the plugin:
 node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs
 ```
 
+Run the local benchmark:
+
+```powershell
+node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs --strict
+```
+
 Add this marketplace to Codex:
 
 ```powershell
@@ -23,6 +29,9 @@ Then restart Codex and invoke skills by name, for example:
 
 ```text
 Use omc-autopilot to build this feature end to end.
+Use omc-ralplan to create a consensus implementation plan.
+Use omc-ultraqa to run QA test/fix cycles.
+Use omc-runtime-policy to inspect OMC activation and context rules.
 Use omc-agents to route this through architect, executor, and verifier roles.
 Use omc-team with 3 workers to split this safely.
 Use omc-verify to prove the change works.

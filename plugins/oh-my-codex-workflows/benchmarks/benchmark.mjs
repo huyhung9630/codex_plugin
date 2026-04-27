@@ -82,6 +82,7 @@ const expectedRoles = [
 ];
 
 const workflowReferenceChecks = [
+  ["omc-keywords", "omc-runtime-policy"],
   ["omc-keywords", "omc-autopilot"],
   ["omc-keywords", "omc-ralph"],
   ["omc-keywords", "omc-ultrawork"],
@@ -100,6 +101,21 @@ const workflowReferenceChecks = [
   ["omc-review", "code-reviewer"],
   ["omc-review", "security-reviewer"],
   ["omc-verify", "verifier"],
+];
+
+const runtimePolicyChecks = [
+  ["skills/omc-runtime-policy/SKILL.md", "Activation Gate"],
+  ["skills/omc-runtime-policy/SKILL.md", "Sub-Agent Context Policy"],
+  ["skills/omc-runtime-policy/SKILL.md", "PROJECT_CONTEXT"],
+  ["skills/omc-runtime-policy/SKILL.md", "Quality Report"],
+  ["skills/omc-runtime-policy/SKILL.md", ".codex/omc/runs"],
+  ["skills/omc-agents/SKILL.md", ".codex/omc/runs"],
+  ["skills/omc-team/SKILL.md", "isolated sub-agent context"],
+  ["skills/omc-team/SKILL.md", "PROJECT_CONTEXT.md"],
+  ["skills/omc-ultrawork/SKILL.md", "context mode"],
+  ["skills/omc-autopilot/SKILL.md", "quality report"],
+  ["skills/omc-reference/SKILL.md", "normal Codex"],
+  ["skills/omc-keywords/SKILL.md", "normal Codex"],
 ];
 
 const codexCompatibilityPatterns = [
@@ -124,7 +140,7 @@ const codexCompatibilityPatterns = [
     allowedFiles: new Set(["README.md", "EVALUATION.md"]),
   },
   {
-    pattern: /\[TODO:|TODO/,
+    pattern: /\[TODO:|TODO(?! \/ NEXT STEPS)/,
     message: "TODO placeholder",
     allowedFiles: new Set(["BENCHMARKS.md", "EVALUATION.md", "scripts/validate-plugin.mjs"]),
   },
@@ -215,6 +231,21 @@ function normalizeSourceSkillName(name) {
     ["ultrawork", "omc-ultrawork"],
     ["verify", "omc-verify"],
     ["visual-verdict", "omc-visual-verdict"],
+    ["ai-slop-cleaner", "omc-ai-slop-cleaner"],
+    ["autoresearch", "omc-autoresearch"],
+    ["configure-notifications", "omc-configure-notifications"],
+    ["deepinit", "omc-deepinit"],
+    ["hud", "omc-hud"],
+    ["mcp-setup", "omc-mcp-setup"],
+    ["omc-doctor", "omc-doctor"],
+    ["omc-setup", "omc-setup"],
+    ["omc-teams", "omc-teams"],
+    ["project-session-manager", "omc-project-session-manager"],
+    ["remember", "omc-remember"],
+    ["self-improve", "omc-self-improve"],
+    ["setup", "omc-setup"],
+    ["wiki", "omc-wiki"],
+    ["writer-memory", "omc-writer-memory"],
   ]);
   return aliases.get(name) ?? name;
 }
@@ -222,18 +253,19 @@ function normalizeSourceSkillName(name) {
 function skillCoverageCheck() {
   const sourceSkills = listDirs(sourceSkillsDir);
   const codexSkills = new Set(listDirs(skillsDir));
-  const coreSourceSkills = expectedCoreSourceSkills.filter((name) => sourceSkills.includes(name));
-  const optionalSourceSkills = optionalRuntimeSourceSkills.filter((name) => sourceSkills.includes(name));
-  const covered = coreSourceSkills.filter((name) => codexSkills.has(normalizeSourceSkillName(name)));
-  const missingCore = coreSourceSkills.filter((name) => !codexSkills.has(normalizeSourceSkillName(name)));
-  const intentionallyExcludedRuntime = optionalSourceSkills.filter(
-    (name) => !codexSkills.has(normalizeSourceSkillName(name)),
+  const covered = sourceSkills.filter((name) => codexSkills.has(normalizeSourceSkillName(name)));
+  const missing = sourceSkills.filter((name) => !codexSkills.has(normalizeSourceSkillName(name)));
+  const sourceMappedNames = new Set(sourceSkills.map((name) => normalizeSourceSkillName(name)));
+  const codexOnly = [...codexSkills].filter((name) => !sourceMappedNames.has(name));
+  const runtimeAdapted = optionalRuntimeSourceSkills.filter(
+    (name) => sourceSkills.includes(name) && codexSkills.has(normalizeSourceSkillName(name)),
   );
 
-  return scoreCheck("skill coverage vs source core", 20, covered.length, coreSourceSkills.length, [
-    `covered core skills: ${covered.length}/${coreSourceSkills.length}`,
-    `missing core skills: ${missingCore.join(", ") || "none"}`,
-    `excluded runtime skills: ${intentionallyExcludedRuntime.join(", ") || "none"}`,
+  return scoreCheck("skill coverage vs source", 20, covered.length, sourceSkills.length, [
+    `covered source skills: ${covered.length}/${sourceSkills.length}`,
+    `missing source skills: ${missing.join(", ") || "none"}`,
+    `runtime skills adapted as workflows: ${runtimeAdapted.join(", ") || "none"}`,
+    `Codex-only support skills: ${codexOnly.join(", ") || "none"}`,
   ]);
 }
 
@@ -338,6 +370,25 @@ function workflowIntegrationCheck() {
   return scoreCheck("workflow integration references", 15, passed, workflowReferenceChecks.length, failures);
 }
 
+function runtimePolicyCheck() {
+  const failures = [];
+  let passed = 0;
+
+  for (const [rel, needle] of runtimePolicyChecks) {
+    const file = path.join(root, rel);
+    if (!fs.existsSync(file)) {
+      failures.push(`${rel}: missing file`);
+      continue;
+    }
+
+    const body = read(file);
+    if (body.includes(needle)) passed += 1;
+    else failures.push(`${rel}: missing '${needle}'`);
+  }
+
+  return scoreCheck("runtime context policy", 10, passed, runtimePolicyChecks.length, failures);
+}
+
 function asciiCheck() {
   const files = listFilesRecursive(root).filter((file) => /\.(md|mjs|json)$/.test(file));
   const failures = [];
@@ -356,6 +407,7 @@ const checks = [
   codexCompatibilityCheck(),
   roleCoverageCheck(),
   workflowIntegrationCheck(),
+  runtimePolicyCheck(),
   asciiCheck(),
 ];
 

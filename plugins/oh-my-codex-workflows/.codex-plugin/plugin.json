@@ -1,6 +1,6 @@
 {
   "name": "oh-my-codex-workflows",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Codex-native workflow skills inspired by oh-my-claudecode.",
   "author": {
     "name": "Local Codex plugin",
@@ -20,8 +20,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Oh My Codex Workflows",
-    "shortDescription": "OMC-style workflow, planning, QA, review, and benchmark skills for Codex.",
-    "longDescription": "A Codex-native workflow pack inspired by oh-my-claudecode. It ports the durable orchestration ideas into installable Codex skills, adds Codex-safe setup and ops workflows, and includes a deterministic benchmark for local effectiveness checks while intentionally omitting Claude-specific hook and slash-command runtimes.",
+    "shortDescription": "OMC-style workflow, planning, QA, review, benchmark, and runtime policy skills for Codex.",
+    "longDescription": "A Codex-native workflow pack inspired by oh-my-claudecode. It ports durable orchestration ideas into installable Codex skills, adds Codex-safe setup and ops workflows, enforces OMC activation/context/artifact policy, and includes a deterministic benchmark for local effectiveness checks while intentionally omitting Claude-specific hook and slash-command runtimes.",
     "developerName": "Local Codex plugin",
     "category": "Productivity",
     "capabilities": [

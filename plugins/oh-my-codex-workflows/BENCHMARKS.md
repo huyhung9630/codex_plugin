@@ -43,9 +43,9 @@ node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs
 
 ## Metrics
 
-- Skill coverage vs source core: compares Codex skill directories against the
-  upstream core workflow skill set, with known Claude-runtime-only skills
-  reported separately as exclusions.
+- Skill coverage vs source: compares Codex skill directories against the
+  upstream skill set and reports Claude-runtime-heavy skills that were adapted
+  as Codex workflow skills.
 - Frontmatter validity: checks every Codex skill has YAML frontmatter with
   matching `name` and non-empty `description`.
 - Codex compatibility scan: flags common Claude-only runtime patterns such as
@@ -56,6 +56,9 @@ node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs
 - Workflow integration references: checks that router, autopilot, team,
   ultrawork, ralph, review, and verify skills still reference the expected
   companion workflows or roles.
+- Runtime context policy: checks that OMC activation gating, isolated
+  sub-agent context, artifact handoff, `PROJECT_CONTEXT.md` closeout, and
+  quality reporting remain documented in the runtime-facing skills.
 - ASCII content: checks benchmarked Markdown, JSON, and Node files for ASCII
   text.
 
@@ -70,11 +73,12 @@ The benchmark prints a 0 to 100 score:
 
 Weights:
 
-- Skill coverage vs source core: 20 percent.
+- Skill coverage vs source: 20 percent.
 - Frontmatter validity: 15 percent.
 - Codex compatibility scan: 20 percent.
 - Role coverage: 20 percent.
 - Workflow integration references: 15 percent.
+- Runtime context policy: 10 percent.
 - ASCII content: 10 percent.
 
 ## Controls

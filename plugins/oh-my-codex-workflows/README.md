@@ -10,7 +10,7 @@ ideas into Codex skills that fit Codex's execution model.
 
 ## What Is Included
 
-This version includes 38 Codex skills:
+This version includes 41 Codex skills:
 
 - Core delivery: `omc-autopilot`, `omc-ralph`, `omc-ultrawork`,
   `omc-team`, `omc-plan`, `omc-ralplan`, `omc-ultraqa`, `omc-cancel`.
@@ -19,15 +19,31 @@ This version includes 38 Codex skills:
   `omc-ai-slop-cleaner`, `omc-visual-verdict`.
 - Agent and routing layer: `omc-agents`, `omc-keywords`,
   `omc-reference`, `omc-ask`, `omc-ccg`, `omc-sciomc`,
-  `omc-external-context`, `omc-autoresearch`.
+  `omc-external-context`, `omc-autoresearch`, `omc-runtime-policy`.
 - Knowledge and project workflows: `omc-remember`, `omc-wiki`,
-  `omc-deepinit`, `omc-skill`, `omc-skillify`, `omc-learner`.
+  `omc-writer-memory`, `omc-deepinit`, `omc-skill`, `omc-skillify`,
+  `omc-learner`.
 - Setup and operations: `omc-setup`, `omc-doctor`, `omc-mcp-setup`,
   `omc-project-session-manager`, `omc-configure-notifications`,
-  `omc-teams`, `omc-hud`, `omc-release`.
+  `omc-teams`, `omc-hud`, `omc-release`, `omc-self-improve`.
 
 It also includes a deterministic benchmark harness in `benchmarks/` for local
 effectiveness checks.
+
+## Runtime Policy
+
+- Normal Codex is the default. OMC skills should run only when an explicit OMC
+  keyword/mode is present or when the task benefits from planning, QA loops,
+  tracing, persistence, review, or parallel workers.
+- Sub-agents use isolated minimal context by default. Full-context forks should
+  be exceptional and recorded with a reason.
+- OMC workers write result artifacts to
+  `.codex/omc/runs/<run-id>/agents/<lane-id>.md`; the lead reads those files
+  for synthesis instead of relying on long raw worker messages.
+- At OMC closeout, update repository-root `PROJECT_CONTEXT.md`.
+- Final OMC responses include a quality report: activation decision, latency if
+  measured, worker count, context mode, token usage if available, artifacts,
+  and verification results.
 
 ## What Is Intentionally Not Included
 
