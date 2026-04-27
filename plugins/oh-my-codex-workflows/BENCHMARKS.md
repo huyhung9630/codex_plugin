@@ -41,6 +41,19 @@ node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs
 node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs
 ```
 
+Run the upstream benchmark adapter:
+
+```powershell
+node .\plugins\oh-my-codex-workflows\benchmarks\upstream-adapter.mjs
+```
+
+Export prompt artifacts from upstream fixtures for manual or model-run
+evaluation:
+
+```powershell
+node .\plugins\oh-my-codex-workflows\benchmarks\upstream-adapter.mjs --export-prompts --output-dir .\.codex\omc\runs\upstream-adapter\prompts
+```
+
 ## Metrics
 
 - Skill coverage vs source: compares Codex skill directories against the
@@ -61,6 +74,9 @@ node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs
   quality reporting remain documented in the runtime-facing skills.
 - ASCII content: checks benchmarked Markdown, JSON, and Node files for ASCII
   text.
+- Upstream benchmark adapter: reuses `_source/oh-my-claudecode/benchmarks`
+  fixtures and ground truth, maps them to Codex role prompts, and can export
+  prompt artifacts without requiring Claude API keys.
 
 ## Scoring
 
@@ -89,6 +105,11 @@ Weights:
 - Node built-ins only.
 - Deterministic input files from `plugins/oh-my-codex-workflows/` and
   `_source/oh-my-claudecode/`.
+
+The upstream adapter is a baseline harness, not a live quality score. It proves
+that Codex role prompts can be evaluated against the upstream benchmark surface.
+Actual model-quality scoring requires collecting model outputs and comparing
+them to the exported upstream ground truth.
 
 ## Stopping Conditions
 

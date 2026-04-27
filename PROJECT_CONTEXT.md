@@ -14,6 +14,7 @@
   - Role prompt inspector: `scripts/role-prompt.mjs`.
   - Plugin validator: `scripts/validate-plugin.mjs`.
   - Deterministic benchmark: `benchmarks/benchmark.mjs`.
+  - Upstream benchmark adapter: `benchmarks/upstream-adapter.mjs`.
   - Runtime policy: `omc-runtime-policy` for activation decisions, isolated
     sub-agent context, artifact handoff, project memory updates, and quality
     reporting.
@@ -46,6 +47,8 @@
     wiring.
   - `benchmark.mjs` compares plugin content against `_source` and local quality
     rules.
+  - `upstream-adapter.mjs` reuses `_source/oh-my-claudecode/benchmarks`
+    fixtures and ground truth, then maps them to Codex role prompts.
 
 # CODING RULES
 
@@ -118,6 +121,9 @@
 - Add benchmark as deterministic file scan.
   - Reason: local quality can be measured without model calls, API keys, or
     package installation.
+- Add upstream benchmark adapter.
+  - Reason: upstream fixtures and ground truth are useful as a baseline for
+    Codex role prompts, but the upstream runner is Claude/Anthropic-specific.
 - Treat runtime-heavy upstream skills as workflow adaptations.
   - Reason: notification delivery, tmux workers, MCP server setup, HUD, and
     self-improve runtime loops require environment-specific approval and cannot
@@ -133,6 +139,8 @@
   - Do not run network installs, push branches, configure credentials, or write
     outside the workspace without explicit approval.
   - Benchmark must not require API keys.
+  - Upstream adapter must not call model APIs by default; it validates and
+    exports prompt artifacts only.
   - Self-improvement workflows must require user confirmation before repeated
     benchmark execution.
 - Business/project rules:
@@ -160,11 +168,15 @@
   - Runtime policy update artifact exists at
     `.codex/omc/runs/20260427-runtime-policy-update/`.
   - `BENCHMARKS.md` and `benchmarks/benchmark.mjs` are present.
+  - `benchmarks/upstream-adapter.mjs` maps 4 upstream suites to Codex roles:
+    `code-reviewer`, `debugger`, `executor`, and `critic`.
   - `ANALYSIS.md` has been refreshed from the old gap report.
 - Verification:
   - `node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs` passes.
   - `node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs --strict`
     passes with 100/100.
+  - `node .\plugins\oh-my-codex-workflows\benchmarks\upstream-adapter.mjs`
+    passes with 4/4 suites and 17/17 ground-truth-backed fixtures.
 - In progress:
   - No active implementation lane.
 - Known issues:
@@ -172,6 +184,7 @@
     available here.
   - Benchmark measures local content quality, not live model task-completion
     quality.
+  - Upstream adapter is a baseline harness, not a live model-quality score.
   - Exact token counts can only be reported when the Codex runtime exposes token
     accounting; otherwise reports must mark token usage as unavailable.
   - Latency is only exact when the run starts with explicit wall-clock

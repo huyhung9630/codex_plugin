@@ -1,0 +1,83 @@
+{
+  "benchmark": "oh-my-codex-upstream-benchmark-adapter",
+  "status": "pass",
+  "elapsedMs": 40,
+  "source": "_source/oh-my-claudecode/benchmarks",
+  "outputDir": ".codex/omc/runs/upstream-adapter/prompts",
+  "totals": {
+    "suites": 4,
+    "fixtures": 17,
+    "groundTruth": 17,
+    "exportedPrompts": 17,
+    "errors": 0
+  },
+  "suites": [
+    {
+      "suite": "code-reviewer",
+      "sourceSuite": "code-reviewer",
+      "role": "code-reviewer",
+      "rolePrompt": "plugins/oh-my-codex-workflows/agents/code-reviewer.md",
+      "fixtures": 3,
+      "groundTruth": 3,
+      "missingGroundTruth": [],
+      "exportedPrompts": [
+        ".codex/omc/runs/upstream-adapter/prompts/code-reviewer/code-payment-refund.md",
+        ".codex/omc/runs/upstream-adapter/prompts/code-reviewer/code-retry-handler.md",
+        ".codex/omc/runs/upstream-adapter/prompts/code-reviewer/code-sql-injection.md"
+      ]
+    },
+    {
+      "suite": "debugger",
+      "sourceSuite": "debugger",
+      "role": "debugger",
+      "rolePrompt": "plugins/oh-my-codex-workflows/agents/debugger.md",
+      "fixtures": 3,
+      "groundTruth": 3,
+      "missingGroundTruth": [],
+      "exportedPrompts": [
+        ".codex/omc/runs/upstream-adapter/prompts/debugger/bug-redis-intermittent.md",
+        ".codex/omc/runs/upstream-adapter/prompts/debugger/bug-ts-build-errors.md",
+        ".codex/omc/runs/upstream-adapter/prompts/debugger/bug-undefined-map.md"
+      ]
+    },
+    {
+      "suite": "executor",
+      "sourceSuite": "executor",
+      "role": "executor",
+      "rolePrompt": "plugins/oh-my-codex-workflows/agents/executor.md",
+      "fixtures": 3,
+      "groundTruth": 3,
+      "missingGroundTruth": [],
+      "exportedPrompts": [
+        ".codex/omc/runs/upstream-adapter/prompts/executor/task-add-timestamp.md",
+        ".codex/omc/runs/upstream-adapter/prompts/executor/task-input-validation.md",
+        ".codex/omc/runs/upstream-adapter/prompts/executor/task-notification-refactor.md"
+      ]
+    },
+    {
+      "suite": "harsh-critic",
+      "sourceSuite": "harsh-critic",
+      "role": "critic",
+      "rolePrompt": "plugins/oh-my-codex-workflows/agents/critic.md",
+      "fixtures": 8,
+      "groundTruth": 8,
+      "missingGroundTruth": [],
+      "exportedPrompts": [
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/analysis-incident-review.md",
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/analysis-perf-report.md",
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/code-payment-handler.md",
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/code-session-manager.md",
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/code-utils-clean.md",
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/plan-api-refactor.md",
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/plan-auth-migration.md",
+        ".codex/omc/runs/upstream-adapter/prompts/harsh-critic/plan-clean-baseline.md"
+      ]
+    }
+  ],
+  "controls": {
+    "apiKeysRequired": false,
+    "modelCalls": false,
+    "dependencies": "Node built-ins only",
+    "usesUpstreamAssets": true
+  }
+}

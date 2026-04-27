@@ -96,6 +96,7 @@ Benchmark checks:
 ```powershell
 node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs
 node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs --strict
+node .\plugins\oh-my-codex-workflows\benchmarks\upstream-adapter.mjs
 ```
 
 Result after the benchmark integration:
@@ -118,6 +119,21 @@ measures skill coverage vs the upstream source skill surface, skill
 frontmatter validity, Codex compatibility, role coverage, workflow integration
 references, runtime context policy coverage, and ASCII content.
 
+Upstream benchmark adapter result:
+
+```text
+Benchmark: oh-my-codex-upstream-benchmark-adapter
+Status: pass
+Suites: 4/4
+Fixtures: 17
+Ground truth: 17/17
+```
+
+The adapter reuses `_source/oh-my-claudecode/benchmarks` fixtures and
+ground-truth files, maps them to Codex role prompts, and can export prompt
+artifacts for manual/model-run evaluation. It does not call Claude or Codex APIs
+by itself.
+
 ## Residual Risk
 
 - This is a workflow-skill plugin, not a full runtime clone of upstream OMC.
@@ -126,3 +142,6 @@ references, runtime context policy coverage, and ASCII content.
 - Existing Codex sessions must be restarted after global install.
 - The benchmark measures local content quality and compatibility, not live
   model task-completion quality.
+- The upstream adapter is a baseline harness. A live quality score still
+  requires collecting model outputs and scoring them against the exported
+  ground truth.
