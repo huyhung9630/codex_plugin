@@ -1,204 +1,221 @@
 # PROJECT OVERVIEW
 
-- Project: local Codex plugin marketplace for `oh-my-codex-workflows`.
-- Purpose: port practical workflow ideas from `_source/oh-my-claudecode` into
-  Codex-native installable skills and role prompts.
-- Target users:
-  - Codex users who want OMC-style workflows: autopilot, ralph, ultrawork,
-    team, consensus planning, QA loops, tracing, and verification.
-  - Maintainers testing local Codex plugins before marketplace/global install.
-- Core features:
-  - 41 Codex skills under `plugins/oh-my-codex-workflows/skills/`.
-  - 19 OMC-style agent role contracts under `plugins/oh-my-codex-workflows/agents/`.
-  - Global skill installer: `scripts/install-global.mjs`.
+- Du an: local Codex plugin marketplace cho `oh-my-codex-workflows`.
+- Chuc nang:
+  - Port cac y tuong workflow thuc dung tu `_source/oh-my-claudecode` sang
+    Codex-native skills, role prompts, va mot runtime orchestrator nhe.
+  - Cung cap OMC-style workflows cho planning, team execution, persistence,
+    parallel work, tracing, QA, review, verification, setup, va memory.
+- Nguoi dung muc tieu:
+  - Nguoi dung Codex muon workflow co cau truc ma khong phu thuoc Claude slash
+    commands, hooks, hay native Team APIs.
+  - Maintainer muon test local Codex plugins truoc khi cai qua marketplace hoac
+    global skills.
+- Tinh nang chinh:
+  - 41 Codex skills trong `plugins/oh-my-codex-workflows/skills/`.
+  - 19 role contracts trong `plugins/oh-my-codex-workflows/agents/`.
+  - Orchestrator V1: `scripts/omc-orchestrator.mjs`.
+  - Global installer: `scripts/install-global.mjs`.
+  - Validator: `scripts/validate-plugin.mjs`.
   - Role prompt inspector: `scripts/role-prompt.mjs`.
-  - Plugin validator: `scripts/validate-plugin.mjs`.
   - Deterministic benchmark: `benchmarks/benchmark.mjs`.
-  - Upstream benchmark adapter: `benchmarks/upstream-adapter.mjs`.
-  - Runtime policy: `omc-runtime-policy` for activation decisions, isolated
-    sub-agent context, artifact handoff, project memory updates, and quality
-    reporting.
+  - Upstream fixture adapter: `benchmarks/upstream-adapter.mjs`.
 
 # ARCHITECTURE
 
 - Tech stack:
-  - Frontend: none.
-  - Backend: none.
-  - Database: none.
-  - Runtime/tooling: Markdown skill files, JSON plugin manifests, Node.js
-    scripts using built-in modules only.
-- High-level structure:
-  - `.agents/plugins/marketplace.json`: local marketplace entry.
-  - `plugins/oh-my-codex-workflows/.codex-plugin/plugin.json`: Codex plugin
-    manifest.
-  - `plugins/oh-my-codex-workflows/skills/<skill>/SKILL.md`: one Codex skill
-    per workflow.
-  - `plugins/oh-my-codex-workflows/agents/*.md`: role contracts mapped to
-    Codex native agent types.
-  - `plugins/oh-my-codex-workflows/scripts/`: validation, role inspection, and
-    global install utilities.
-  - `plugins/oh-my-codex-workflows/benchmarks/`: local benchmark harness.
-  - `_source/oh-my-claudecode/`: upstream reference clone.
+  - Frontend: khong co.
+  - Backend: khong co.
+  - Database: khong co.
+  - Runtime/tooling: Markdown skills, Markdown agent roles, JSON manifests,
+    Node.js `.mjs` scripts chi dung built-in modules.
+- Cau truc tong quan:
+  - `.agents/plugins/marketplace.json`: local Codex marketplace entry.
+  - `plugins/oh-my-codex-workflows/.codex-plugin/plugin.json`: plugin manifest.
+  - `plugins/oh-my-codex-workflows/skills/<skill>/SKILL.md`: workflow skills.
+  - `plugins/oh-my-codex-workflows/agents/*.md`: role contracts map sang Codex
+    native `worker`, `explorer`, hoac `default` agents.
+  - `plugins/oh-my-codex-workflows/scripts/`: installer, validator, role
+    inspector, va orchestrator.
+  - `plugins/oh-my-codex-workflows/benchmarks/`: deterministic quality checks.
+  - `_source/oh-my-claudecode/`: upstream reference read-only.
 - Data flow:
-  - Codex reads marketplace -> plugin manifest -> skills directory.
-  - Skill discovery exposes `SKILL.md` frontmatter and body to future sessions.
-  - `install-global.mjs` copies plugin skills to `~/.codex/skills`.
-  - `validate-plugin.mjs` checks manifest, skills, agent roles, and marketplace
-    wiring.
-  - `benchmark.mjs` compares plugin content against `_source` and local quality
-    rules.
-  - `upstream-adapter.mjs` reuses `_source/oh-my-claudecode/benchmarks`
-    fixtures and ground truth, then maps them to Codex role prompts.
+  - Codex load marketplace -> plugin manifest -> skill frontmatter/body.
+  - `install-global.mjs` copy skills, agents, scripts vao `~/.codex`.
+  - OMC runs ghi durable state vao `.codex/omc/runs/<run-id>/`.
+  - Worker ghi artifact trong `agents/`; lead doc artifact de synthesize.
+  - Orchestrator ghi `manifest.json`, packet state, handoffs, verification
+    logs, fix loop state, va closeout.
 
 # CODING RULES
 
-- Naming conventions:
-  - Skill folders use `omc-*` names and frontmatter `name` must match folder.
-  - Agent role files use lowercase kebab-case, e.g. `code-reviewer.md`.
-  - Node scripts use `.mjs` and built-in Node modules.
-- Folder structure:
-  - Keep plugin code inside `plugins/oh-my-codex-workflows/`.
-  - Keep local marketplace metadata inside `.agents/plugins/`.
-  - Keep upstream reference read-only under `_source/oh-my-claudecode/`.
-- Patterns used:
-  - Markdown-first plugin design; behavior lives in skill instructions.
-  - Codex-native adaptation instead of direct Claude runtime cloning.
-  - Role-prompt routing: `omc-agents` maps roles to `worker`, `explorer`, or
-    `default`.
-  - Artifact-first sub-agent handoff: workers write results under
-    `.codex/omc/runs/<run-id>/agents/`; the lead reads artifacts for synthesis.
-  - Deterministic validation and benchmark scripts with no package installs.
-- Editing expectations:
-  - Preserve ASCII unless a file already requires non-ASCII.
-  - Do not add Claude-only runtime assumptions to Codex skills.
-  - Keep skills concise, action-oriented, and safe about external writes,
-    credentials, network access, and destructive operations.
+- Quy uoc ten:
+  - Skill folders va frontmatter names dung `omc-*`.
+  - Agent role files dung lowercase kebab-case, vi du `code-reviewer.md`.
+  - Node scripts dung `.mjs`.
+- Quy tac thu muc:
+  - Code plugin shipped nam trong `plugins/oh-my-codex-workflows/`.
+  - Marketplace metadata nam trong `.agents/plugins/`.
+  - `_source/oh-my-claudecode/` chi la reference, khong sua de ship.
+  - Run artifacts nam trong `.codex/omc/runs/<run-id>/`.
+- Pattern dang dung:
+  - Markdown-first skill design.
+  - Codex-native adaptation thay vi clone truc tiep Claude runtime.
+  - Role-prompt routing qua `omc-agents`.
+  - Artifact-first sub-agent handoff.
+  - Orchestrator V1 state machine de gate run co the audit duoc.
+  - Validation va benchmark deterministic, khong can package install.
+- Quy tac edit:
+  - Giu ASCII tru khi file da can non-ASCII.
+  - Khong them gia dinh Claude-only runtime vao Codex skills.
+  - Khong dung upstream-only APIs trong shipped Codex skills, gom Claude slash
+    commands, hooks, `TeamCreate`, `TaskCreate`, `SendMessage`,
+    `CLAUDE_PLUGIN_ROOT`.
+  - Skills phai ngan gon, operational, va an toan voi credentials, network
+    access, destructive actions, external writes.
 
 # API & DATA CONTRACTS
 
-- No HTTP API and no database schema.
-- Plugin manifest contract:
+- Khong co HTTP API va khong co database schema.
+- Plugin manifest:
   - File: `plugins/oh-my-codex-workflows/.codex-plugin/plugin.json`.
-  - Required fields checked by validator: `name`, `version`, `description`,
-    `license`, `skills`.
-  - `interface.defaultPrompt` must contain at most 3 strings, each <= 128 chars.
+  - Version hien tai: `0.7.0`.
+  - Required fields: `name`, `version`, `description`, `license`, `skills`.
+  - `interface.defaultPrompt` toi da 3 strings, moi string <= 128 chars.
 - Skill contract:
-  - Each skill directory must contain `SKILL.md`.
-  - Frontmatter must include matching `name` and non-empty `description`.
-  - Optional fields include `argument-hint` and `level`.
+  - Moi skill directory co `SKILL.md`.
+  - Frontmatter `name` phai khop folder name.
+  - Frontmatter `description` phai khong rong va <= 240 chars.
 - Agent role contract:
-  - Each role file must include `Native type:`, `## Mission`, and
-    `## Prompt Addendum`.
-  - Native type must map to Codex-supported `worker`, `explorer`, or `default`.
-- Marketplace contract:
-  - `.agents/plugins/marketplace.json` must point to
-    `./plugins/oh-my-codex-workflows`.
-  - Plugin source must be local and include installation/authentication policy.
-- Benchmark output contract:
-  - `node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs --json`
-    emits `benchmark`, `status`, `score`, `threshold`, `strict`, `checks`, and
-    `controls`.
+  - Moi role file co `Native type:`, `## Mission`, va `## Prompt Addendum`.
+  - Native type phai map sang Codex-supported `worker`, `explorer`, hoac
+    `default`.
+- Orchestrator V1 contract:
+  - `start` tao `.codex/omc/runs/<run-id>/manifest.json`.
+  - `packet` dang ky work truoc khi execute voi lane, role, scope, subject,
+    dependencies, va verification expectation.
+  - `agent` dang ky worker completion va giu nguyen rich artifact neu da ton
+    tai, tru khi truyen `--overwrite`.
+  - `handoff` ghi stage decisions vao `handoffs/<stage>.md`.
+  - `transition` enforce team stage order va yeu cau handoff cho previous stage,
+    tru khi dung `--force` de recovery.
+  - `verify` ghi command hoac evidence verification.
+  - `fix` vao `team-fix` va tang `fix_loop_count`.
+  - `close --status complete` yeu cau team run phai di qua `team-plan`,
+    `team-exec`, va `team-verify`, co handoffs bat buoc, packets completed,
+    worker artifacts ton tai, khong co failed/blocked/stale/partial workers,
+    khong co failed verification, va co it nhat mot passing verification.
+- Benchmark output:
+  - `benchmark.mjs --json` emit `benchmark`, `status`, `score`, `threshold`,
+    `strict`, `checks`, va `controls`.
 
 # KEY DECISIONS (WITH REASONS)
 
-- Port workflows as Codex skills, not Claude runtime code.
-  - Reason: Codex does not expose Claude slash commands, hooks, Task APIs, or
-    `CLAUDE_PLUGIN_ROOT` runtime.
-- Keep `omc-*` names for all ported skills.
-  - Reason: avoids name collisions with system skills and makes OMC routing
-    explicit in skill discovery.
-- Fold upstream `setup` into `omc-setup`.
-  - Reason: avoids duplicate non-prefixed skill while still covering upstream
-    setup behavior.
-- Add `omc-agents`, `omc-keywords`, and `omc-review` as Codex-only support
-  skills.
-  - Reason: upstream embeds this behavior in Claude prompts/agents; Codex needs
-    visible skill routing.
-- Add `omc-runtime-policy` as a Codex-only support skill.
-  - Reason: OMC should be opt-in/materially useful, sub-agents should avoid
-    consuming the lead context window, and every OMC run should produce
-    artifacts, project memory, and quality telemetry.
-- Add benchmark as deterministic file scan.
-  - Reason: local quality can be measured without model calls, API keys, or
-    package installation.
-- Add upstream benchmark adapter.
-  - Reason: upstream fixtures and ground truth are useful as a baseline for
-    Codex role prompts, but the upstream runner is Claude/Anthropic-specific.
-- Treat runtime-heavy upstream skills as workflow adaptations.
-  - Reason: notification delivery, tmux workers, MCP server setup, HUD, and
-    self-improve runtime loops require environment-specific approval and cannot
-    be safely cloned as always-on behavior.
+- Port workflows thanh Codex skills, khong port Claude runtime code.
+  - Ly do: Codex khong expose Claude slash commands, hooks, native Team APIs,
+    hay Claude environment variables.
+- Giu tat ca ported skills duoi prefix `omc-*`.
+  - Ly do: tranh trung voi system skills va lam routing ro rang.
+- Them `omc-orchestrator.mjs` lam V1 runtime gate.
+  - Ly do: skills chi la instruction text; orchestrator state bien packets,
+    artifacts, handoffs, verification, fix loops, va closeout thanh enforceable.
+- Harden `omc-team` quanh packet va stage gates.
+  - Ly do: V1 cu co the close sau khi sua manifest thu cong va chua chung minh
+    day du history `team-plan -> team-exec -> team-verify`.
+- `omc-team` worker intelligence do user quyet dinh khi prompt ghi ro
+  `high`, `medium`, `low`, hoac `xhigh`; neu khong ghi thi dung runtime default.
+  - Ly do: tranh ep chi phi/latency mac dinh; worker van doc lap theo packet va
+    co the doc artifact/handoff cua nhau khi lead cho phep.
+- Giu nguyen worker artifacts da ton tai trong `agent`.
+  - Ly do: artifact do worker viet thuong giau thong tin hon compact metadata
+    cua orchestrator, khong nen bi registration ghi de.
+- Dung deterministic benchmarks thay vi live model benchmarks.
+  - Ly do: local validation phai chay duoc khong can API keys, network calls,
+    hay model variability.
+- Giu `_source/oh-my-claudecode` read-only.
+  - Ly do: day la upstream comparison source, khong phai shipped plugin.
 
 # CONSTRAINTS
 
 - Performance:
-  - Validation and benchmark should remain fast and deterministic.
-  - Scripts should use Node built-ins only unless a future decision changes
-    that contract.
+  - Validation va benchmark phai nhanh va deterministic.
+  - Scripts chi dung Node built-ins tru khi co quyet dinh khac sau nay.
 - Security:
-  - Do not run network installs, push branches, configure credentials, or write
-    outside the workspace without explicit approval.
-  - Benchmark must not require API keys.
-  - Upstream adapter must not call model APIs by default; it validates and
-    exports prompt artifacts only.
-  - Self-improvement workflows must require user confirmation before repeated
-    benchmark execution.
+  - Validation va benchmark khong can API keys.
+  - Khong configure credentials, chay network installs, push branches, hoac ghi
+    ra ngoai intended workspaces neu chua co user approval ro rang.
+  - Khong dua secrets vao worker prompts hoac artifacts.
 - Business/project rules:
-  - Plugin remains a Codex-native workflow pack, not a full upstream runtime
-    clone.
-  - Normal Codex is the default; OMC runs only when explicit or materially
+  - Plugin van la Codex-native, khong phai full upstream Claude runtime clone.
+  - Normal Codex la default; OMC chi activate khi explicit hoac materially
     useful.
-  - OMC sub-agents use isolated context by default and write result artifacts.
-  - OMC closeout updates `PROJECT_CONTEXT.md` and reports latency/token/context
-    telemetry when available.
-  - `_source/oh-my-claudecode` is reference material, not the shipped plugin.
-  - Restart Codex or reinstall marketplace/global skills after plugin edits.
+  - OMC sub-agents dung isolated context theo default.
+  - Team worker intelligence chi duoc override khi user ghi ro trong prompt;
+    prompt chi co `team N worker` thi khong set `reasoning_effort`.
+  - Team workers co the tham khao peer artifacts va handoffs duoc lead chi dinh;
+    khong gia lap native worker-to-worker messaging neu runtime khong expose.
+  - OMC closeout nen update `PROJECT_CONTEXT.md` va report artifacts,
+    verification, context mode, token usage neu co, latency neu do duoc.
+  - Restart Codex hoac reinstall global skills sau khi sua plugin.
+- Runtime limits da biet:
+  - Orchestrator V1 khong implement Claude native `TeamCreate`, `TaskList`,
+    `SendMessage`, hoac `TeamDelete`.
+  - Codex sub-agent lifecycle van phu thuoc Codex runtime tools; orchestrator
+    gate state nhung chua so huu hoan toan worker process management.
 
 # CURRENT STATE
 
-- Completed:
-  - Plugin version is `0.4.1`.
-  - 41 Codex skills exist.
-  - Upstream source skill coverage benchmark is 38/38.
-  - 19 agent role contracts exist and validate.
-  - `omc-autopilot` includes resume, `omc-ralplan`, `omc-ultraqa`, config, and
-    cleanup guidance.
-  - `omc-runtime-policy` defines activation gate, isolated sub-agent context,
-    run artifacts, `PROJECT_CONTEXT.md` closeout, and quality reporting.
-  - Runtime policy update artifact exists at
-    `.codex/omc/runs/20260427-runtime-policy-update/`.
-  - `BENCHMARKS.md` and `benchmarks/benchmark.mjs` are present.
-  - `benchmarks/upstream-adapter.mjs` maps 4 upstream suites to Codex roles:
-    `code-reviewer`, `debugger`, `executor`, and `critic`.
-  - `ANALYSIS.md` has been refreshed from the old gap report.
+- Da hoan thanh:
+  - Plugin version `0.7.0`.
+  - Co 41 skills va 19 agent roles.
+  - Da restore skill density cho `omc-team`, `omc-ralph`, `omc-trace`, va
+    `omc-ultrawork`.
+  - Orchestrator V1 da hardened voi packet registry, stage order enforcement,
+    artifact preservation, verification gates, va fix loop tracking.
+  - Global install smoke da pass tu temporary workspace ben ngoai plugin repo
+    bang `C:\Users\MinhHuong\.codex\scripts\omc-orchestrator.mjs`.
+  - `omc-team` skill hien yeu cau command sequence:
+    `start -> packet -> handoff -> transition -> agent -> verify -> close`.
+  - `omc-team` parse worker intelligence tu prompt, vi du
+    `team 20 worker medium` -> `reasoning_effort: medium`,
+    `team 5 worker high` -> `reasoning_effort: high`; neu khong ghi thi de
+    runtime default va van coordination qua peer artifacts, stage handoffs, va
+    lead-mediated follow-up.
+  - Global skills da sync lai bang `install-global.mjs` sau update
+    user-controlled worker intelligence; can restart Codex de reload skill
+    cache.
+  - README, ANALYSIS, benchmark checks, va runtime policy references da update
+    cho Orchestrator V1.
 - Verification:
-  - `node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs` passes.
+  - `node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs` pass.
   - `node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs --strict`
-    passes with 100/100.
+    pass voi 100/100.
+  - `node .\plugins\oh-my-codex-workflows\benchmarks\benchmark.mjs --strict --json`
+    pass.
   - `node .\plugins\oh-my-codex-workflows\benchmarks\upstream-adapter.mjs`
-    passes with 4/4 suites and 17/17 ground-truth-backed fixtures.
-- In progress:
-  - No active implementation lane.
+    pass voi 4/4 suites va 17/17 fixtures.
+- Dang lam:
+  - Khong co active implementation lane.
 - Known issues:
-  - This workspace is not a Git repository, so `git status` and diffs are not
-    available here.
-  - Benchmark measures local content quality, not live model task-completion
-    quality.
-  - Upstream adapter is a baseline harness, not a live model-quality score.
-  - Exact token counts can only be reported when the Codex runtime exposes token
-    accounting; otherwise reports must mark token usage as unavailable.
-  - Latency is only exact when the run starts with explicit wall-clock
-    measurement; otherwise reports must mark latency as unavailable.
+  - Workspace co unrelated dirty/untracked local files duoi `.omc/` va local
+    docs; khong revert neu user khong yeu cau ro.
+  - Benchmark chi do local content quality, khong do live model task completion.
+  - Exact token counts khong co neu Codex runtime khong expose accounting.
+  - Latency khong co neu run khong record wall-clock timing tu dau.
+  - Orchestrator da gan hon voi `oh-my-claude team` workflow, nhung van thieu
+    native Claude team messaging/task APIs.
 
 # TODO / NEXT STEPS
 
-- Run `node .\plugins\oh-my-codex-workflows\scripts\install-global.mjs` if the
-  updated skills should be available globally in new Codex sessions.
-- Restart Codex after plugin or global skill updates.
-- Re-add local marketplace if Codex does not pick up the current path:
-  `codex plugin marketplace remove local-codex-plugins`, then
-  `codex plugin marketplace add C:\Users\MinhHuong\Documents\codex_plugin`.
-- Add a live task-completion benchmark later if model-quality measurement is
-  required.
-- Keep `PROJECT_CONTEXT.md`, `ANALYSIS.md`, `README.md`, `EVALUATION.md`, and
-  `BENCHMARKS.md` synchronized when workflow coverage changes.
+- Restart Codex sau global install de skill cache nhan skills moi nhat.
+- Re-run `install-global.mjs` sau moi lan sua skill, agent, hoac script.
+- Them live task-completion benchmark neu can do chat luong model.
+- Chi them Orchestrator V2 neu can:
+  - worker process registry;
+  - stale worker detection;
+  - reassignment;
+  - resume command;
+  - optional Codex CLI worker process spawning.
+- Giu `PROJECT_CONTEXT.md`, `ANALYSIS.md`, `README.md`, `EVALUATION.md`, va
+  `BENCHMARKS.md` dong bo khi workflow coverage hoac orchestrator behavior
+  thay doi.

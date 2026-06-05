@@ -1,6 +1,6 @@
 {
   "name": "oh-my-codex-workflows",
-  "version": "0.4.1",
+  "version": "0.7.0",
   "description": "Codex-native workflow skills inspired by oh-my-claudecode.",
   "author": {
     "name": "Local Codex plugin",

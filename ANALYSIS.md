@@ -1,5 +1,5 @@
 # Analysis: oh-my-codex-workflows vs oh-my-claudecode
-> Updated: 2026-04-26
+> Updated: 2026-04-28
 
 ## Summary
 
@@ -10,6 +10,11 @@ The previous analysis identified three main gaps:
 - no benchmark existed to evaluate oh-my-codex effectiveness.
 
 Those gaps have now been addressed in `plugins/oh-my-codex-workflows`.
+
+The 2026-04-28 update closes the remaining skill-density gap for the four
+compressed core workflow skills: `omc-team`, `omc-ralph`, `omc-trace`, and
+`omc-ultrawork`. Their content now restores the upstream workflow concepts while
+keeping Codex-safe artifact handoffs instead of Claude-specific runtime APIs.
 
 ## Current Coverage
 
@@ -81,6 +86,23 @@ The policy requires:
 - quality report with activation decision, latency if measured, worker count,
   context mode, token usage if available, artifacts, and verification.
 
+## Skill Density Restoration
+
+The core parallelism, persistence, and tracing skills were expanded from terse
+stubs into Codex-native workflow ports:
+
+| Skill | Previous lines | Current lines | Restored workflow coverage |
+|---|---:|---:|---|
+| `omc-ultrawork` | 66 | 154 | execution policy, wave planning, lane template, quality report |
+| `omc-trace` | 84 | 204 | evidence hierarchy, falsification, competing lanes, rebuttal |
+| `omc-ralph` | 41 | 184 | PRD loop, reviewer verification, deslop, regression re-check |
+| `omc-team` | 95 | 383 | staged pipeline, routing, handoffs, recovery, provider routing |
+
+Compression gap status: closed for the four tracked core skills. The port keeps
+the workflow descriptions and replaces non-portable runtime mechanics with
+`.codex/omc/runs/<run-id>/agents/` and
+`.codex/omc/runs/<run-id>/handoffs/` artifacts.
+
 ## Benchmark
 
 Added:
@@ -108,6 +130,34 @@ node .\plugins\oh-my-codex-workflows\scripts\validate-plugin.mjs
 Expected result after this update: validator passes and benchmark scores
 100/100 in normal and strict modes.
 
+The benchmark runtime policy checks now also guard the restored staged pipeline,
+Ralph polite-stop/boulder state, trace evidence/rebuttal flow, and ultrawork
+lane template.
+
+## Orchestrator V1
+
+The plugin now includes a Codex-native state-machine orchestrator:
+`plugins/oh-my-codex-workflows/scripts/omc-orchestrator.mjs`.
+
+V1 is intentionally smaller than the upstream runtime. It does not spawn a
+separate worker process manager, but it now enforces the workflow contract:
+
+- creates `.codex/omc/runs/<run-id>/manifest.json`;
+- registers work packets before worker execution;
+- registers worker artifacts under `agents/`;
+- preserves rich worker artifacts when registering completion;
+- records stage handoffs under `handoffs/`;
+- enforces `team-plan -> team-exec -> team-verify` stage history for team
+  completion;
+- records command or evidence verification;
+- blocks `complete` closeout when artifacts or passing verification are
+  missing;
+- tracks `team-fix` loops with `fix_loop_count` and `max_fix_loops`;
+- supports `team`, `ralph`, `trace`, and `ultrawork` modes.
+
+This moves OMC behavior from pure instruction-following toward an auditable
+runtime gate. Live worker spawning can be layered on top later.
+
 ## Intentional Non-Ports
 
 The following upstream pieces remain intentionally not ported as runtime code:
@@ -128,6 +178,9 @@ Where useful, their workflows are represented as Codex-safe skills such as
 
 - Agents: complete.
 - Skills: complete as Codex-native workflow ports.
+- Skill density: restored for `omc-team`, `omc-ralph`, `omc-trace`, and
+  `omc-ultrawork`.
+- Orchestrator V1: added and hardened as a Codex-native state-machine gate.
 - Autopilot depth: upgraded.
 - Benchmark: added.
 - Remaining risk: benchmark checks local content quality, not live model

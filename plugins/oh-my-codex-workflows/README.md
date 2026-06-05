@@ -27,8 +27,12 @@ This version includes 41 Codex skills:
   `omc-project-session-manager`, `omc-configure-notifications`,
   `omc-teams`, `omc-hud`, `omc-release`, `omc-self-improve`.
 
-It also includes a deterministic benchmark harness in `benchmarks/` for local
-effectiveness checks.
+It also includes:
+
+- `scripts/omc-orchestrator.mjs`: a Codex-native V1 state-machine
+  orchestrator for run manifests, work packets, worker artifacts, stage
+  handoffs, verification gates, fix loops, and closeout.
+- `benchmarks/`: deterministic local effectiveness checks.
 
 ## Runtime Policy
 
@@ -37,9 +41,18 @@ effectiveness checks.
   tracing, persistence, review, or parallel workers.
 - Sub-agents use isolated minimal context by default. Full-context forks should
   be exceptional and recorded with a reason.
+- `omc-team` honors explicit worker intelligence hints such as `team 20 worker
+  medium` or `team 5 worker high`; without a hint, it leaves worker reasoning at
+  the runtime default.
 - OMC workers write result artifacts to
   `.codex/omc/runs/<run-id>/agents/<lane-id>.md`; the lead reads those files
   for synthesis instead of relying on long raw worker messages.
+- Team lanes coordinate through peer artifacts, stage handoffs, and
+  lead-mediated follow-ups instead of shared full conversation context.
+- The V1 orchestrator enforces completion gates: successful team closeout
+  requires registered work packets, `team-plan -> team-exec -> team-verify`
+  stage history, required handoffs, worker artifacts, no failed worker status,
+  and at least one passing verification entry.
 - At OMC closeout, update repository-root `PROJECT_CONTEXT.md`.
 - Final OMC responses include a quality report: activation decision, latency if
   measured, worker count, context mode, token usage if available, artifacts,
@@ -49,8 +62,8 @@ effectiveness checks.
 
 - Claude Code slash commands such as `/team`, `/autopilot`, and `/ralph`.
 - Claude hook lifecycle scripts using `CLAUDE_PLUGIN_ROOT`.
-- The OMC Node CLI, tmux worker runtime, notification delivery runtime, and MCP
-  server implementations.
+- The upstream OMC Node CLI, tmux worker runtime, notification delivery runtime,
+  and MCP server implementations.
 - Claude-style prompt rewriting hooks. In Codex, OMC-like keyword behavior is
   implemented through globally installed skills and skill discovery.
 
@@ -76,6 +89,31 @@ List or inspect role contracts:
 node .\plugins\oh-my-codex-workflows\scripts\role-prompt.mjs list
 node .\plugins\oh-my-codex-workflows\scripts\role-prompt.mjs show architect
 ```
+
+## Orchestrator V1
+
+Use the orchestrator when an OMC skill needs enforceable state instead of only
+model-followed instructions:
+
+```powershell
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs start --mode team --task "refactor auth module"
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs packet --run <run-id> --lane auth-exec --role executor --scope "src/auth" --subject "Refactor auth module" --verification "npm test -- auth"
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs handoff --run <run-id> --stage team-plan --next team-exec --decided "auth packet assigned"
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs transition --run <run-id> --stage team-exec
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs agent --run <run-id> --lane auth-exec --role executor --scope "src/auth" --verification "tests pass"
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs handoff --run <run-id> --stage team-exec --next team-verify --decided "auth packet complete"
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs transition --run <run-id> --stage team-verify
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs verify --run <run-id> --name auth-tests --command "npm test -- auth"
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs status --run <run-id>
+node .\plugins\oh-my-codex-workflows\scripts\omc-orchestrator.mjs close --run <run-id> --status complete
+```
+
+Supported modes are `team`, `ralph`, `trace`, and `ultrawork`. Run state lives
+under `.codex/omc/runs/<run-id>/`. A `complete` team closeout fails unless the
+manifest has packet registry entries, required stage history, handoffs for
+completed stages, passing verification, and all registered worker artifacts.
+If verification fails, use `fix --run <run-id> --reason "<why>"` to enter
+`team-fix`; the orchestrator bounds retries with `max_fix_loops`.
 
 ## Install
 

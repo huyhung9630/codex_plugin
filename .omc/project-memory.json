@@ -1,0 +1,203 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1777382437459,
+  "projectRoot": "C:\\Users\\MinhHuong\\Documents\\codex_plugin",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "plugins": {
+      "path": "plugins",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1777382437432,
+      "keyFiles": []
+    },
+    "_source": {
+      "path": "_source",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1777382437433,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "plugins\\oh-my-codex-workflows\\skills\\omc-team\\SKILL.md",
+      "accessCount": 3,
+      "lastAccessed": 1777383161385,
+      "type": "file"
+    },
+    {
+      "path": "_source\\oh-my-claudecode\\skills\\team\\SKILL.md",
+      "accessCount": 3,
+      "lastAccessed": 1777383171915,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\skills\\omc-ralph\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383161982,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\skills\\omc-trace\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383162324,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\skills\\omc-ultrawork\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383163101,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\skills\\omc-runtime-policy\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383163868,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\benchmarks\\benchmark.mjs",
+      "accessCount": 2,
+      "lastAccessed": 1777383169251,
+      "type": "file"
+    },
+    {
+      "path": "_source\\oh-my-claudecode\\skills\\ralph\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383172675,
+      "type": "file"
+    },
+    {
+      "path": "_source\\oh-my-claudecode\\skills\\trace\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383173043,
+      "type": "file"
+    },
+    {
+      "path": "_source\\oh-my-claudecode\\skills\\ultrawork\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383173689,
+      "type": "file"
+    },
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "accessCount": 2,
+      "lastAccessed": 1777383181092,
+      "type": "file"
+    },
+    {
+      "path": "HUONG_DAN_SU_DUNG.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382547135,
+      "type": "file"
+    },
+    {
+      "path": "ANALYSIS.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382547920,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382548104,
+      "type": "file"
+    },
+    {
+      "path": "_source\\oh-my-claudecode\\package.json",
+      "accessCount": 1,
+      "lastAccessed": 1777382578402,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\BENCHMARKS.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382579591,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\EVALUATION.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382579948,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\NOTICE.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382580451,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\benchmarks\\upstream-adapter.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1777382581479,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\skills\\omc-autopilot\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382588039,
+      "type": "file"
+    },
+    {
+      "path": "_source\\oh-my-claudecode\\skills\\autopilot\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1777382589025,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\skills\\omc-keywords\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1777383164293,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\scripts\\validate-plugin.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1777383170114,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows\\agents\\AGENTS.md",
+      "accessCount": 1,
+      "lastAccessed": 1777383179420,
+      "type": "file"
+    },
+    {
+      "path": "plugins\\oh-my-codex-workflows",
+      "accessCount": 1,
+      "lastAccessed": 1777383180551,
+      "type": "directory"
+    }
+  ],
+  "userDirectives": []
+}

@@ -33,6 +33,22 @@ Use OMC when:
 If OMC is not justified, continue with normal Codex and do not force plugin
 ceremony.
 
+## Worker Budget Policy
+
+When a prompt includes a worker count, treat it as a maximum budget, not a quota
+or target. Choose the actual number of workers from the task shape after
+inspecting enough context.
+
+- Use 0 workers when the lead can complete the task locally with lower overhead.
+- Use 1-2 workers for useful sidecar discovery, review, or verification.
+- Use 3-5 workers only when implementation can be split into disjoint modules.
+- Use more than 5 workers only for large repos with many independent lanes and a
+  clear integration plan.
+- Never spawn filler workers, duplicate lanes, or one-worker-per-file lanes just
+  to match a requested number.
+- Record the requested budget and actual worker count in `manifest.json` and the
+  quality report.
+
 ## Run Artifacts
 
 For every OMC-routed run, create a lightweight run directory:
@@ -59,9 +75,14 @@ Sub-agents must use their own focused context window by default.
 - Do not fork the full conversation into a sub-agent unless the worker cannot
   complete the task without prior conversation details.
 - Give each worker a small prompt containing only role contract, task, ownership,
-  acceptance criteria, relevant file paths, verification command, and artifact
-  path.
+  acceptance criteria, relevant file paths, verification command, artifact path,
+  and any lead-approved peer artifact or handoff paths.
+- For `omc-team`, request worker intelligence only when the user supplied a
+  level such as `high`, `medium`, `low`, or `xhigh`; otherwise leave reasoning
+  unset and record `unspecified/runtime default`.
 - Tell each worker to read only the files it needs for its owned task.
+- Tell each worker it may read lead-provided peer artifacts and handoffs when
+  its packet depends on another lane, without forking the full conversation.
 - Tell each worker to write its result to:
   `.codex/omc/runs/<run-id>/agents/<lane-id>.md`
 - The lead should read the artifact files and make decisions from those files,
@@ -81,9 +102,11 @@ Each worker artifact should contain:
 
 - Role:
 - Native agent type:
+- Model or reasoning setting:
 - Context mode: isolated|forked
 - Task:
 - Owned paths:
+- Peer artifacts or handoffs read:
 - Files read:
 - Files changed:
 - Verification:

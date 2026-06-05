@@ -146,6 +146,9 @@ if (!fs.existsSync(path.join(root, "scripts", "role-prompt.mjs"))) {
 if (!fs.existsSync(path.join(root, "scripts", "install-global.mjs"))) {
   errors.push("scripts/install-global.mjs is required for OMC-like global install");
 }
+if (!fs.existsSync(path.join(root, "scripts", "omc-orchestrator.mjs"))) {
+  errors.push("scripts/omc-orchestrator.mjs is required for OMC runtime orchestration");
+}
 
 const agentsDir = path.join(root, "agents");
 if (!fs.existsSync(agentsDir) || !fs.statSync(agentsDir).isDirectory()) {
