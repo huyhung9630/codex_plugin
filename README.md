@@ -1,4 +1,4 @@
-# Local Codex Plugin Marketplace
+# Codex Plugin Multi-Agent Orchestrator for Coding
 
 This workspace contains a local Codex marketplace and one plugin:
 
