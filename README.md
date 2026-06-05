@@ -8,7 +8,6 @@ Core components:
 - Main plugin: `plugins/oh-my-codex-workflows`
 - Agent roles: `plugins/oh-my-codex-workflows/agents`
 - Skill workflows: `plugins/oh-my-codex-workflows/skills`
-- Upstream reference clone: `_source/oh-my-claudecode`
 
 The goal of this repository is to give Codex reusable orchestration patterns for delegating work across specialized roles such as architect, planner, executor, reviewer, verifier, debugger, and designer. The OMC workflows help Codex plan, implement, review, test, and verify software changes with a multi-agent style operating model.
 
